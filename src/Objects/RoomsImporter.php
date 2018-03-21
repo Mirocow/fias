@@ -1,8 +1,10 @@
 <?php
 
+namespace Objects;
+
 use Grace\DBAL\ConnectionAbstract\ConnectionInterface;
 
-class AddressObjectsImporter extends Importer
+class RoomsImporter extends \Importer
 {
 
     public function __construct(ConnectionInterface $db, $table, array $fields)
@@ -12,7 +14,7 @@ class AddressObjectsImporter extends Importer
 
     public function modifyDataAfterImport()
     {
-        RawDataHelper::cleanAddressObjects($this->db);
+
     }
 
     protected $rowsPerInsert = 100000;

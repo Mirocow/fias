@@ -17,5 +17,15 @@ class HousesImporter extends Importer
         RawDataHelper::updateNextAddressLevelFlag($this->db);
     }
 
-    protected $rowsPerInsert = 10000;
+    protected $rowsPerInsert = 100000;
+
+    public function setRowsLimit($limit = 10000)
+    {
+        return $this->rowsPerInsert = $limit;
+    }
+
+    public function getRowsLimit()
+    {
+        return $this->rowsPerInsert;
+    }
 }

@@ -33,22 +33,37 @@ class DbHelper
         $db->execute($sql, $params);
     }
 
-    public static function runFile($db, $path)
+    public static function runFile(array $dbConfig, $path)
     {
         FileHelper::ensureIsReadable($path);
         $path = escapeshellarg($path);
-        $db   = escapeshellarg($db);
 
-        exec('psql -f ' . $path . ' ' . $db . ' 2>&1', $output, $result);
+        $command = '';
+        if(isset($dbConfig['pass'])){
+            $command .= 'set PGPASSWORD=' . $dbConfig['pass'] . ' &&';
+        }
+        $command .= ' psql ';
+        if(isset($dbConfig['user'])){
+            $command .= ' -U ' . $dbConfig['user'];
+        }
+        if(isset($dbConfig['path'])){
+            $db = ltrim($dbConfig['path'], '/');
+        }
+        if(!isset($db)){
+            throw new \Exception("Database not found");
+        }
+        $command .= ' -f ' . $path . ' ' . $db . ' 2>&1';
+
+        exec($command, $output, $result);
 
         if ($result !== 0) {
-            throw new \Exception('Ошибка выполнения SQL файла: ' . implode("\n", $output));
+            throw new \Exception("Ошибка выполнения SQL файла: \n" . implode("\n", $output) . "\n\n");
         }
 
         if ($output) {
             foreach ($output as $line) {
                 if (preg_match('/psql:(.*)ERROR:/', $line)) {
-                    throw new \Exception('Ошибка выполнения SQL файла: ' . implode("\n", $output));
+                    throw new \Exception("Ошибка выполнения SQL файла: \n" . implode("\n", $output) . "\n\n");
                 }
             }
         }

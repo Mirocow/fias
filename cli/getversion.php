@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$container = new Container();
+$container = new Application();
 $loader    = $container->getUpdateLoader();
 
 echo "Последняя версия: ", $loader->getLastFileInfo()->getVersionId(), "\n";

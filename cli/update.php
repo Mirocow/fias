@@ -4,18 +4,13 @@ use Bravicility\Failure\FailureHandler;
 use FileSystem\Dearchiver;
 use FileSystem\Directory;
 use DataSource\XmlReader;
+use objects\AddressObjectsUpdater;
+use objects\HousesUpdater;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$container = new Container();
+$container = new Application();
 $db        = $container->getDb();
-$logger    = $container->getErrorLogger();
-
-FailureHandler::setup(function ($error) use ($logger) {
-    $logger->error($error['message'], $error);
-    fwrite(STDERR, "В процессе инициализации произошла ошибка:\n{$error['message']}\n");
-    exit(1);
-});
 
 $db->start();
 
@@ -40,8 +35,8 @@ if ($newVersionId != ($oldVersionId + 1)) {
 
 $db->execute('SET CONSTRAINTS "address_objects_parent_id_fkey", "houses_parent_id_fkey" DEFERRED');
 
-$housesConfig         = $container->getHousesImportConfig();
-$addressObjectsConfig = $container->getAddressObjectsImportConfig();
+$housesConfig         = $container->getImportConfig('houses');
+$addressObjectsConfig = $container->getImportConfig('address_objects');
 
 $deletedHouseFile = $directory->getDeletedHouseFile();
 if ($deletedHouseFile && $housesConfig) {
@@ -96,7 +91,7 @@ if ($housesConfig) {
     $houseFields['PREVID'] = ['name' => 'previous_id', 'type' => 'uuid'];
     $housesUpdater         = new HousesUpdater($db, $housesConfig['table_name'], $houseFields);
     $housesUpdater->update(new XmlReader(
-        $directory->getHouseFile(),
+        $directory->getHousesFile(),
         $housesConfig['node_name'],
         array_keys($houseFields),
         []

@@ -4,5 +4,5 @@ namespace DataSource;
 
 interface DataSource
 {
-    public function getRows($maxCount = 1000);
+    public function getRows($maxCount = 1000); //: \Iterator;
 }

@@ -34,21 +34,20 @@ class XmlReader implements DataSource
         }
     }
 
-    public function getRows($maxCount = 1000)
+    /**
+     * @param int $maxCount
+     * @return \Generator|void
+     */
+    public function getRows($maxCount = 1000)//: \Iterator
     {
         $this->ensureMaxCountIsValid($maxCount);
-
-        $result = [];
         $count  = 0;
-
         while (($count < $maxCount) && $this->reader->read()) {
             if ($this->checkIsNodeAccepted($this->reader->name)) {
-                $result[] = $this->getRowAttributes();
+                yield $this->getRowAttributes();
                 ++$count;
             }
         }
-
-        return $result;
     }
 
     private function ensureMaxCountIsValid($maxCount)

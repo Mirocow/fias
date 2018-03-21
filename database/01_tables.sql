@@ -1,5 +1,19 @@
-DROP TABLE IF EXISTS houses;
-CREATE TABLE houses (
+-- DROP TABLE IF EXISTS rooms;
+CREATE TABLE IF NOT EXISTS rooms (
+    id          UUID PRIMARY KEY NOT NULL,
+    house_id    UUID             NOT NULL,
+    flat_number VARCHAR,
+    postal_code INTEGER,
+    cadastr_number VARCHAR
+);
+COMMENT ON TABLE  rooms                 IS  'данные по квартирам';
+COMMENT ON COLUMN rooms.id             IS  'идентификационный код записи';
+COMMENT ON COLUMN rooms.house_id        IS  'идентификационный код дома';
+COMMENT ON COLUMN rooms.flat_number     IS  'номер квартиры';
+COMMENT ON COLUMN rooms.cadastr_number  IS  'кадастровый номер';
+
+-- DROP TABLE IF EXISTS houses;
+CREATE TABLE IF NOT EXISTS houses (
     id          UUID PRIMARY KEY NOT NULL,
     house_id    UUID             NOT NULL,
     address_id  UUID DEFAULT NULL,
@@ -18,8 +32,8 @@ COMMENT ON COLUMN houses.building    IS 'корпус';
 COMMENT ON COLUMN houses.structure   IS 'строение';
 COMMENT ON COLUMN houses.postal_code IS 'индекс';
 
-DROP TABLE IF EXISTS address_objects;
-CREATE TABLE address_objects (
+-- DROP TABLE IF EXISTS address_objects;
+CREATE TABLE IF NOT EXISTS address_objects (
     id                 UUID PRIMARY KEY NOT NULL,
     address_id         UUID             NOT NULL,
     parent_id          UUID             DEFAULT NULL,
@@ -48,19 +62,17 @@ COMMENT ON COLUMN address_objects.prefix             IS 'ул., пр. и так 
 COMMENT ON COLUMN address_objects.house_count        IS 'количество домов';
 COMMENT ON COLUMN address_objects.next_address_level IS 'уровень следующего дочернего объекта по ФИАС';
 
-DROP TABLE IF EXISTS address_object_levels;
-CREATE TABLE address_object_levels (
+-- DROP TABLE IF EXISTS address_object_levels;
+CREATE TABLE IF NOT EXISTS address_object_levels (
     id    INTEGER PRIMARY KEY,
-    title VARCHAR,
-    code  VARCHAR
+    title VARCHAR
 );
 COMMENT ON TABLE address_object_levels        IS 'перечень уровня адресных объектов по ФИАС';
 COMMENT ON COLUMN address_object_levels.id    IS 'идентификационный код записи';
 COMMENT ON COLUMN address_object_levels.title IS 'описание уровня';
-COMMENT ON COLUMN address_object_levels.title IS 'код уровня';
 
-DROP TABLE IF EXISTS update_log;
-CREATE TABLE update_log (
+-- DROP TABLE IF EXISTS update_log;
+CREATE TABLE IF NOT EXISTS update_log (
     id SERIAL PRIMARY KEY,
     version_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP(0)
@@ -69,39 +81,11 @@ COMMENT ON TABLE update_log              IS 'лог обновлений';
 COMMENT ON COLUMN update_log.version_id  IS 'id версии, полученной от базы ФИАС';
 COMMENT ON COLUMN update_log.created_at  IS 'дата установки обновления/инициализации';
 
-DROP TABLE IF EXISTS places;
-CREATE TABLE places (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR,
-    full_title VARCHAR,
-    parent_id INTEGER,
-    type_id INTEGER NOT NULL,
-    have_children BOOLEAN DEFAULT FALSE
-);
-COMMENT ON TABLE places                IS 'справочник мест';
-COMMENT ON COLUMN places.title         IS 'название места';
-COMMENT ON COLUMN places.full_title    IS 'название места с типом';
-COMMENT ON COLUMN places.parent_id     IS 'идентификатор родительского места';
-COMMENT ON COLUMN places.type_id       IS 'идентификатор типа места';
-COMMENT ON COLUMN places.have_children IS 'есть ли дочерние сущности';
-
-DROP TABLE IF EXISTS place_types;
-CREATE TABLE place_types(
-    id SERIAL PRIMARY KEY,
-    parent_id INTEGER,
-    title VARCHAR NOT NULL UNIQUE,
-    system_name VARCHAR UNIQUE
-);
-COMMENT ON TABLE place_types              IS 'справочник типов мест';
-COMMENT ON COLUMN place_types.parent_id   IS 'идентификатор типа родителя';
-COMMENT ON COLUMN place_types.title       IS 'название типа для пользователя';
-COMMENT ON COLUMN place_types.system_name IS 'системное имя типа, для использования в программном коде';
-
-DROP TABLE IF EXISTS regions;
-CREATE TABLE regions (
+-- DROP TABLE IF EXISTS regions;
+CREATE TABLE IF NOT EXISTS regions (
     number VARCHAR PRIMARY KEY,
     title VARCHAR
 );
 COMMENT ON TABLE regions         IS 'список регионов';
 COMMENT ON COLUMN regions.number IS 'номер региона';
-COMMENT ON COLUMN regions.number IS 'название региона';
+COMMENT ON COLUMN regions.title IS 'название региона';

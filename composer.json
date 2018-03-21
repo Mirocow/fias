@@ -4,30 +4,26 @@
     "require": {
         "php": ">=5.5.0",
         "miknatr/grace-dbal": "dev-master",
-        "miknatr/bravicility": "1.0.0",
-        "stiffbeards/kola": "dev-master",
-        "stiffbeards/browser": "dev-master"
+        "monolog/monolog": "dev-master",
+        "pinepain/simple-routing": "dev-master",
+        "mirocow/html-helper": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "5.2.*"
     },
     "autoload": {
         "psr-0": {
-            "": ["src", "tests"]
+            "": ["src", "tests", "app"]
         }
     },
     "repositories": [
         {
-            "type": "vcs",
-            "url":  "https://github.com/miknatr/bravicility.git"
+            "type": "git",
+            "url":  "https://github.com/mirocow/html-helper.git"
         },
         {
-            "type": "vcs",
-            "url":  "git@bitbucket.org:miknatr/tos-kola.git"
-        },
-        {
-            "type": "vcs",
-            "url":  "https://github.com/miknatr/browser.git"
+            "type": "git",
+            "url":  "https://github.com/pinepain/php-simple-routing.git"
         }
     ]
 }

@@ -13,8 +13,12 @@ class UpdateLoader extends Base
     {
         $filesInfo = $this->getLastFileInfo();
 
+        if(floatval($filesInfo->getVersionId()) < floatval($this->updateTillVersion)){
+            throw new \Exception("Import fias data not found");
+        }
+
         return $this->wrap(
-            $this->loadFile($filesInfo->getUpdateFileName(), $filesInfo->getUpdateFileUrl())
+            $this->loadFile($filesInfo->getInitFileName(), $filesInfo->getInitFileUrl())
         );
     }
 }

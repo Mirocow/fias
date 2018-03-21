@@ -6,34 +6,38 @@ class Dearchiver
 {
     public static function extract($pathToFileDirectory, $pathToFile)
     {
-        static::checkPaths($pathToFileDirectory, $pathToFile);
+        $pathToFile = $pathToFileDirectory . '/' . $pathToFile;
+
         $directory = static::generateDirectoryName($pathToFileDirectory, $pathToFile);
+        if(!file_exists($directory)){
+            mkdir($directory, 0770);
+        }
+        static::checkPaths($directory);
         static::doExtract($directory, $pathToFile);
 
         return $directory;
     }
 
-    private static function checkPaths($pathToFileDirectory, $pathToFile)
+    private static function checkPaths($pathToFileDirectory)
     {
-        FileHelper::ensureIsReadable($pathToFile);
+        FileHelper::ensureIsReadable($pathToFileDirectory);
         FileHelper::ensureIsDirectory($pathToFileDirectory);
         FileHelper::ensureIsWritable($pathToFileDirectory);
     }
 
     private static function generateDirectoryName($pathToFileDirectory, $pathToFile)
     {
+
+
         // Формируем имя папки вида VersionID_DateAndTime
         return $pathToFileDirectory
             . '/'
-            . explode('_', basename($pathToFile), 1)[0]
-            . '_'
-            . date('YmdHis')
+            . basename($pathToFile, '.rar')
         ;
     }
 
     private static function doExtract($directoryForExtract, $pathToFile)
     {
-        mkdir($directoryForExtract);
 
         $pathToFile          = escapeshellarg($pathToFile);
         $directoryForExtract = escapeshellarg($directoryForExtract);
