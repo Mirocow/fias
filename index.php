@@ -1,33 +1,20 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 
-use Bravicility\Failure\FailureHandler;
-use Bravicility\Http\Request;
-use Bravicility\Http\Response\Response;
-use Bravicility\Http\Response\TextResponse;
-use Bravicility\Router\RouteNotFoundException;
+$container = new Application();
+$logger    = $container->getLogger();
+$dispatcher = $container->getDispatcher();
 
-require_once __DIR__ . '/../vendor/autoload.php';
+$uri = $_SERVER['REQUEST_URI'];
 
-$container = new Container();
-$logger    = $container->getErrorLogger();
-FailureHandler::setup(function ($error) use ($logger) {
-    (new TextResponse(500, 'Произошла ошибка сервера'))->send();
-    $logger->error($error['message'], $error);
-    exit;
-});
-
-try {
-    $request = Request::createFromGlobals();
-    $route   = $container->getRouter()->route($request->getMethod(), $request->getUrlPath());
-    $request->setOptions($route->vars);
-
-    /** @var Response $response */
-    $response = (new $route->class($container))->{$route->method}($request);
-} catch (RouteNotFoundException $e) {
-    $response = new Response(404);
-} catch (BadRequestException $e) {
-    $response = new Response(400, $e->getMessage());
+// Remove ? from our route path
+if (false !== $pos = strpos($uri, '?')) {
+    $uri = substr($uri, $pos + 1, strlen($uri));
 }
 
-$response->addHeader('Access-Control-Allow-Origin: *');
-$response->send();
+// Hack
+if (strlen($uri) > 1) {
+    $uri = rtrim(rawurldecode($uri), '/');
+}
+
+$container->routeExecute($dispatcher, $uri);
